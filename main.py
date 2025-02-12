@@ -1,5 +1,7 @@
+import math
 import pygame
 import numpy as np
+
 pygame.init()
 
 # Window settings
@@ -13,47 +15,39 @@ clock = pygame.time.Clock()
 # Line position
 line_a,line_b = [150,150] , [200,200]
 
-# Star attributes
-
-
 # Functions
 # Move
 def move_by(a,b,xy):
+    # Calculation of new position
     result = [a[0]+xy[0] , a[1]+xy[1] , b[0]+xy[0] , b[1]+xy[1]]
-    print(result)
     return result
 
 # Scale
 def scale_by(a, b, scalar):
-    a_orig = a
-
-    a[0] = a[0] - b[0]
-    a[1] = a[1] - b[1]
-    b[0] = b[0] - a[0]
-    b[1] = b[1] - a[1]
-
-    scalar = [[scalar[0],0],[0,scalar[1]]]
-    scaled_a = [np.transpose(np.dot(scalar[0], np.transpose(a[0]))),np.transpose(np.dot(scalar[0], np.transpose(a[1])))]
-    scaled_b = [np.transpose(np.dot(scalar[1], np.transpose(b[0]))),np.transpose(np.dot(scalar[1], np.transpose(b[1])))]
-    scaled_a = np.transpose(scaled_a)
-    scaled_b = np.transpose(scaled_b)
-    result = [scaled_a[0]+a_orig[0], scaled_a[1]+a_orig[1], scaled_b[0], scaled_b[1]]
+    # Storing a copy of original values
+    default_a, default_b = a, b
+    # Subtracts the position vectors
+    a = np.subtract(a, default_a)
+    b = np.subtract(b, default_a)
+    # Scales the points, and adds back the default position values
+    scaled_a = np.add(np.multiply(scalar, a), default_a)
+    scaled_b = np.add(np.multiply(scalar, b), default_b)
+    # Stores the new scaled vector positions, and returns them
+    result = [[round(scaled_a[0], 2), round(scaled_a[1], 2)], [round(scaled_b[0], 2), round(scaled_b[1], 2)]]
     print("A: " + str(result[0]) + " B: " + str(result[1]))
     return result
 
 # Rotate
 def rotate_by(a,b,angle):
+    # Converts degrees to radians
     rads = angle * np.pi / 180
-
-    a[0] = a[0] - b[0]
-    a[1] = a[1] - b[1]
-
+    # Subtracts the position vectors
+    a = np.subtract(a,b)
+    # Calculation of new position
     new_x = a[0] * np.cos(rads) - a[1] * np.sin(rads)
     new_y = a[0] * np.sin(rads) + a[1] * np.cos(rads)
-
+    # Stores new position and then returns it
     result = [new_x+b[0],new_y+b[1]]
-
-    print(result)
     return result
 
 while True:
@@ -67,11 +61,14 @@ while True:
 
         # Mouse events
         if pygame.mouse.get_pressed()[0]:
-            line_scalar = scale_by(line_a, line_b, [1.1, 1.1])
+            line_scalar = scale_by(line_a, line_b, [0.05,0.05])
             line_a = line_scalar[0]
             line_b = line_scalar[1]
-            line_a[0],line_a[1] = int(line_a[0]),int(line_a[1])
-            line_b[0],line_b[1] = int(line_b[0]),int(line_b[1])
+
+        if pygame.mouse.get_pressed()[2]:
+            line_scalar = scale_by(line_a, line_b, [-0.05,-0.05])
+            line_a = line_scalar[0]
+            line_b = line_scalar[1]
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 5:
@@ -95,7 +92,7 @@ while True:
                 line_b = [movement[2],movement[3]]
 
             if event.key == pygame.K_RIGHT:
-                movement = move_by(line_b,line_a,[10,0])
+                movement = move_by(line_a,line_b,[10,0])
                 line_a = [movement[0],movement[1]]
                 line_b = [movement[2],movement[3]]
 
