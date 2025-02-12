@@ -49,8 +49,10 @@ def rotate_by(a,b,angle):
     result = [new_x+b[0],new_y+b[1]]
     return result
 
+# Used to determine if the program should be running
 program_running = True
 
+# Main loop
 while program_running:
     for event in pygame.event.get():
         # BEGIN
@@ -62,12 +64,12 @@ while program_running:
 
         # Mouse events
         if pygame.mouse.get_pressed()[0]:
-            line_scalar = scale_by(line_a, line_b, [0.05,0.05])
+            line_scalar = scale_by(line_a, line_b, [0.1,0.1])
             line_a = line_scalar[0]
             line_b = line_scalar[1]
 
         if pygame.mouse.get_pressed()[2]:
-            line_scalar = scale_by(line_a, line_b, [-0.05,-0.05])
+            line_scalar = scale_by(line_a, line_b, [-0.1,-0.1])
             line_a = line_scalar[0]
             line_b = line_scalar[1]
 
@@ -108,7 +110,7 @@ while program_running:
     # UPDATE
     pygame.display.flip()
     clock.tick(60)
-    pygame.display.set_caption('Lines, curves and areas/blobs | FPS:' + str(clock.get_fps()))
+    pygame.display.set_caption('Lines, curves and areas/blobs | FPS:' + str(round(clock.get_fps(),1)))
 
 # Quits the game
 pygame.quit()
