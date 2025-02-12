@@ -1,7 +1,6 @@
-import math
+import sys
 import pygame
 import numpy as np
-
 pygame.init()
 
 # Window settings
@@ -50,14 +49,16 @@ def rotate_by(a,b,angle):
     result = [new_x+b[0],new_y+b[1]]
     return result
 
-while True:
+program_running = True
+
+while program_running:
     for event in pygame.event.get():
         # BEGIN
         viewport.fill((0, 0, 0))
 
         # EVENTS
         if event.type == pygame.QUIT:
-            pygame.quit()
+            program_running = False
 
         # Mouse events
         if pygame.mouse.get_pressed()[0]:
@@ -101,7 +102,6 @@ while True:
                 line_a = [movement[0],movement[1]]
                 line_b = [movement[2],movement[3]]
 
-
         # DRAW
         pygame.draw.line(viewport, (255,255,255), line_a, line_b)
 
@@ -109,3 +109,7 @@ while True:
     pygame.display.flip()
     clock.tick(60)
     pygame.display.set_caption('Lines, curves and areas/blobs | FPS:' + str(clock.get_fps()))
+
+# Quits the game
+pygame.quit()
+sys.exit()
